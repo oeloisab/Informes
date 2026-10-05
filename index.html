@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Control RFP Sigma — Cavas & Títulos</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --navy:   #1E3A5F;
+  --blue:   #2A5298;
+  --bg:     #EEF3FA;
+  --white:  #FFFFFF;
+  --gray:   #6B7280;
+  --graylt: #F1F5F9;
+  --border: #CBD5E1;
+  --text:   #1E293B;
+
+  --cavas:  #059669; --cavas-lt:#D1FAE5; --cavas-txt:#065F46;
+  --tits:   #2563EB; --tits-lt: #DBEAFE; --tits-txt: #1E3A8A;
+  --both:   #7C3AED; --both-lt: #EDE9FE; --both-txt: #4C1D95;
+  --dead:   #DC2626; --dead-lt: #FEF2F2;
+  --ok:     #16A34A;
+
+  --area-tec: #2563EB;
+  --area-com: #D97706;
+  --area-adm: #0F766E;
+
+  --d1: #6D28D9; --d2: #0F766E; --d3: #1D4ED8; --d4: #BE185D;
+  --d5: #92400E; --d6: #374151; --d7: #C2410C; --d8: #0369A1;
+  --d9: #9D174D; --d10:#15803D; --d12:#1E40AF; --d13:#374151;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --navy:#A8C4E5;
+    --bg:#0F172A; --white:#1E293B; --text:#E2E8F0;
+    --graylt:#1E293B; --border:#334155; --gray:#94A3B8;
+    --cavas-lt:#064E3B; --tits-lt:#1A3060; --both-lt:#2E1065;
+    --dead-lt:#450A0A;
+    --cavas-txt:#6EE7B7; --tits-txt:#93C5FD; --both-txt:#C4B5FD;
+  }
+}
+:root[data-theme="dark"] {
+  --navy:#A8C4E5;
+  --bg:#0F172A; --white:#1E293B; --text:#E2E8F0;
+  --graylt:#1E293B; --border:#334155; --gray:#94A3B8;
+  --cavas-lt:#064E3B; --tits-lt:#1A3060; --both-lt:#2E1065;
+  --dead-lt:#450A0A;
+  --cavas-txt:#6EE7B7; --tits-txt:#93C5FD; --both-txt:#C4B5FD;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);color:var(--text);
+  padding:env(safe-area-inset-top,0) 16px 48px;
+  min-height:100vh;
+}
+
+/* HEADER */
+.page-header{
+  background:var(--navy);border-radius:12px;
+  padding:16px 18px 14px;margin:16px 0 14px;
+}
+.page-header h1{font-size:1.15rem;font-weight:700;margin-bottom:3px;color:#fff}
+.page-header p{font-size:.78rem;opacity:.75;color:#fff}
+.deadline-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--dead);color:#fff;border-radius:20px;
+  padding:3px 12px;font-size:.76rem;font-weight:700;margin-top:8px;
+}
+
+/* LEYENDA */
+.people-legend{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.person-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 9px;border-radius:20px;font-size:.7rem;font-weight:600;color:#fff;
+}
+
+/* PROJECT TABS */
+.proj-tabs{
+  display:flex;gap:6px;margin-bottom:16px;
+  border-bottom:2px solid var(--border);padding-bottom:0;
+}
+.proj-tab{
+  padding:8px 18px;font-size:.85rem;font-weight:700;
+  border:none;border-bottom:3px solid transparent;background:none;
+  color:var(--gray);cursor:pointer;margin-bottom:-2px;
+  border-radius:6px 6px 0 0;transition:.15s;
+}
+.proj-tab:hover{color:var(--text);background:var(--graylt)}
+.proj-tab.active{color:var(--blue);border-bottom-color:var(--blue);background:var(--white)}
+.proj-tab.active.cavas-tab{color:var(--cavas);border-bottom-color:var(--cavas)}
+.proj-tab.active.titulos-tab{color:var(--tits);border-bottom-color:var(--tits)}
+
+/* PANEL */
+.proj-panel{display:none}
+.proj-panel.active{display:block}
+
+/* AREA GRID — 3 cols desktop */
+.area-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:14px;margin-bottom:24px;
+}
+@media(max-width:760px){.area-grid{grid-template-columns:1fr}}
+
+/* AREA COLUMN */
+.area-col{}
+.area-header{
+  font-size:.78rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  padding:7px 12px;border-radius:8px 8px 0 0;
+  color:#fff;margin-bottom:0;
+}
+.area-col.tec .area-header{background:var(--area-tec)}
+.area-col.com .area-header{background:var(--area-com)}
+.area-col.adm .area-header{background:var(--area-adm)}
+
+.area-body{
+  background:var(--white);border:1px solid var(--border);border-top:none;
+  border-radius:0 0 8px 8px;
+  display:flex;flex-direction:column;gap:0;overflow:hidden;
+}
+
+/* ENTREGABLE ROW */
+.cp-row{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:9px 10px;border-bottom:1px solid var(--border);
+  transition:background .12s;
+}
+.cp-row:last-child{border-bottom:none}
+.cp-row:hover{background:var(--graylt)}
+.cp-row.done-card{opacity:.5}
+.cp-row.done-card .cp-title{text-decoration:line-through;color:var(--gray)}
+.cp-row.milestone-row{background:var(--dead-lt);border-left:3px solid var(--dead)}
+
+/* checkbox */
+.cp-check{
+  width:16px;height:16px;min-width:16px;border-radius:3px;
+  border:2px solid var(--border);appearance:none;cursor:pointer;
+  position:relative;margin-top:2px;transition:.12s;
+}
+.cp-check:checked{background:var(--ok);border-color:var(--ok)}
+.cp-check:checked::after{
+  content:"✓";color:#fff;font-size:10px;font-weight:700;
+  position:absolute;top:-1px;left:2px;
+}
+
+.cp-body{flex:1;min-width:0}
+.cp-title{font-size:.78rem;font-weight:600;line-height:1.35;display:block;margin-bottom:4px}
+
+/* fecha badge */
+.fecha-badge{
+  display:inline-block;background:var(--graylt);
+  border:1px solid var(--border);border-radius:4px;
+  padding:1px 6px;font-size:.65rem;font-weight:700;
+  color:var(--navy);white-space:nowrap;margin-right:4px;
+}
+.fecha-dead{background:var(--dead-lt);color:var(--dead);border-color:var(--dead)}
+.fecha-inicio{background:var(--cavas-lt);color:var(--ok);border-color:var(--ok)}
+
+.cp-meta{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.cp-nota{font-size:.68rem;color:var(--gray);font-style:italic;margin-top:3px;line-height:1.35;display:block}
+
+/* rfp badge */
+.rfp-badge{
+  display:inline-block;border-radius:4px;
+  font-size:.63rem;font-weight:700;padding:1px 5px;white-space:nowrap;
+}
+.rfp-C{background:var(--cavas-lt);color:var(--cavas-txt)}
+.rfp-T{background:var(--tits-lt);color:var(--tits-txt)}
+.rfp-A{background:var(--both-lt);color:var(--both-txt)}
+
+/* owner */
+.owner-chip{
+  display:inline-flex;align-items:center;
+  border-radius:20px;padding:1px 6px;
+  font-size:.65rem;font-weight:600;color:#fff;white-space:nowrap;
+}
+
+/* tipo */
+.tipo-badge{font-size:.62px;display:none} /* hidden in this layout — info is in section header */
+
+/* CHECKLISTS */
+.cl-section-title{
+  font-size:.88rem;font-weight:700;color:var(--navy);
+  margin:24px 0 10px;padding-left:10px;
+  border-left:3px solid var(--blue);
+}
+.cl-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
+@media(max-width:560px){.cl-grid{grid-template-columns:1fr}}
+.cl-card{
+  background:var(--white);border-radius:10px;
+  padding:12px 14px;
+  box-shadow:0 1px 5px rgba(0,0,0,.07);
+  border-top:3px solid var(--blue);
+}
+.cl-card.cavas{border-top-color:var(--cavas)}
+.cl-card.titulos{border-top-color:var(--tits)}
+.cl-card h3{font-size:.78rem;font-weight:700;color:var(--navy);margin-bottom:8px}
+.cl-prog-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-bottom:4px}
+.cl-prog-fill{height:100%;background:var(--ok);border-radius:2px;width:0%;transition:width .3s}
+.cl-prog-txt{font-size:.65rem;color:var(--gray);margin-bottom:8px}
+.cl-item{
+  display:flex;align-items:flex-start;gap:7px;
+  padding:5px 0;border-bottom:1px solid var(--border);font-size:.74rem;
+}
+.cl-item:last-child{border-bottom:none}
+.cl-item input{margin-top:2px;flex-shrink:0;cursor:pointer;accent-color:var(--ok)}
+.cl-item label{cursor:pointer;line-height:1.35;flex:1}
+.cl-dl{font-size:.64rem;color:var(--dead);font-weight:600;white-space:nowrap;margin-left:4px}
+
+/* ── VIEW TOGGLE ── */
+.view-toggle{display:flex;gap:6px;margin-bottom:12px}
+.vtoggle{
+  padding:4px 14px;border-radius:6px;border:1px solid var(--border);
+  background:var(--white);color:var(--gray);cursor:pointer;
+  font-size:.8rem;font-weight:600;transition:.15s;
+}
+.vtoggle:hover:not(.active){background:var(--graylt)}
+.vtoggle.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+/* ── GANTT ── */
+.gantt-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--border);margin-bottom:24px;background:var(--white)}
+
+footer{text-align:center;font-size:.7rem;color:var(--gray);margin-top:28px}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Control de Entregables — RFP Sigma</h1>
+  <p>Propuesta Técnica &amp; Administrativa · por proyecto y área</p>
+  <div class="deadline-pill">⏱ DEADLINE: Viernes 9 Oct · 14:00 hrs</div>
+</div>
+
+<div class="people-legend">
+  <span class="person-pill" style="background:var(--d1)">Cluster</span>
+  <span class="person-pill" style="background:var(--d2)">Adrian (Apps)</span>
+  <span class="person-pill" style="background:var(--d3)">Felix (Infra)</span>
+  <span class="person-pill" style="background:var(--d4)">Yare (QA)</span>
+  <span class="person-pill" style="background:var(--d5)">Miguel (PMO)</span>
+  <span class="person-pill" style="background:var(--d6)">Daniel (Seg)</span>
+  <span class="person-pill" style="background:var(--d7)">SSP/Silvia</span>
+  <span class="person-pill" style="background:var(--d8)">Capital Humano</span>
+  <span class="person-pill" style="background:var(--d9)">Legal</span>
+  <span class="person-pill" style="background:var(--d10)">Mkt/Dir Com</span>
+  <span class="person-pill" style="background:var(--d12)">Benjamin (IA)</span>
+  <span class="person-pill" style="background:var(--d13)">Juan Ramón (Dir)</span>
+</div>
+
+<!-- ══ TABS ══ -->
+<div class="proj-tabs">
+  <button class="proj-tab cavas-tab active" onclick="switchTab('cavas')">📦 Cavas</button>
+  <button class="proj-tab titulos-tab" onclick="switchTab('titulos')">🏛️ Títulos</button>
+</div>
+
+<!-- ════════════════════ CAVAS ════════════════════ -->
+<div class="proj-panel active" id="panel-cavas">
+
+  <div class="view-toggle">
+    <button class="vtoggle active" onclick="setView('cavas','cards')">📋 Tarjetas</button>
+    <button class="vtoggle" onclick="setView('cavas','gantt')">📅 Cronograma</button>
+  </div>
+
+  <div id="cards-cavas">
+  <div class="area-grid">
+
+    <!-- TÉCNICA CAVAS -->
+    <div class="area-col tec">
+      <div class="area-header">🔧 Técnica</div>
+      <div class="area-body">
+
+        <div class="cp-row" id="row-c-tec-1">
+          <input type="checkbox" class="cp-check" id="c-tec-1" data-sync="tec-1" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Respuestas a preguntas de aclaración enviadas a Sigma</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Lun 6 · 09:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d1)">Cluster</span>
+            </div>
+            <span class="cp-nota">Consolidado de 10 preguntas; confirmar recepción por Sigma</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-tec-2">
+          <input type="checkbox" class="cp-check" id="c-tec-2" data-sync="tec-2" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Kickoff técnico — distribución de secciones confirmada</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Lun 6 · 10:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d1)">Cluster</span>
+            </div>
+            <span class="cp-nota">Adrian: Apps · Felix: Infra/Cloud · Cluster: Arquitectura</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-tec-3">
+          <input type="checkbox" class="cp-check" id="c-tec-3" data-sync="" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Adrian — borrador Apps/App Innovation</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Mar 7 · 17:00</span>
+              <span class="rfp-badge rfp-C">Cavas</span>
+              <span class="owner-chip" style="background:var(--d2)">Adrian</span>
+            </div>
+            <span class="cp-nota">Arquitectura, diagramas, componentes IA identificados</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-tec-4">
+          <input type="checkbox" class="cp-check" id="c-tec-4" data-sync="tec-4" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Yare, Daniel y Miguel reciben borradores técnicos</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Mié 8 · 10:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d4)">Yare</span>
+              <span class="owner-chip" style="background:var(--d6)">Daniel</span>
+              <span class="owner-chip" style="background:var(--d5)">Miguel</span>
+            </div>
+            <span class="cp-nota">Inicio de QA, Seguridad y PMO — dependen de entrega de Adrian</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-tec-5">
+          <input type="checkbox" class="cp-check" id="c-tec-5" data-sync="" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Felix — Infraestructura / Cloud</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Mié 8 · 14:00</span>
+              <span class="rfp-badge rfp-C">Cavas</span>
+              <span class="owner-chip" style="background:var(--d3)">Felix</span>
+            </div>
+            <span class="cp-nota">Arquitectura cloud, proveedores, cronograma editable, garantía/SLA, soporte</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-tec-6">
+          <input type="checkbox" class="cp-check" id="c-tec-6" data-sync="" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Benjamin inicia cotización de componente IA</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Mié 8 · 16:00</span>
+              <span class="rfp-badge rfp-C">Cavas</span>
+              <span class="owner-chip" style="background:var(--d12)">Benjamin</span>
+            </div>
+            <span class="cp-nota">PDF independiente de la propuesta económica (requisito de bases Cavas)</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-tec-7">
+          <input type="checkbox" class="cp-check" id="c-tec-7" data-sync="tec-7" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Yare — QA / Plan de pruebas</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Jue 9 · 09:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d4)">Yare</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-tec-8">
+          <input type="checkbox" class="cp-check" id="c-tec-8" data-sync="tec-8" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Daniel — Seguridad / Modelo de seguridad</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Jue 9 · 09:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d6)">Daniel</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-tec-9">
+          <input type="checkbox" class="cp-check" id="c-tec-9" data-sync="tec-9" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Miguel — Cronograma de proyecto editable (PMO)</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Jue 9 · 09:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d5)">Miguel</span>
+            </div>
+            <span class="cp-nota">Cavas: cronograma editable · Títulos: Gantt con hitos y responsables</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-tec-10">
+          <input type="checkbox" class="cp-check" id="c-tec-10" data-sync="tec-10" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Cluster — Propuesta técnica integrada PDF</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Vie 10 · 14:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d1)">Cluster</span>
+            </div>
+            <span class="cp-nota">Integra todas las secciones; portada, tabla de contenido y formato final</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- COMERCIAL CAVAS -->
+    <div class="area-col com">
+      <div class="area-header">💰 Comercial</div>
+      <div class="area-body">
+
+        <div class="cp-row" id="row-c-com-1">
+          <input type="checkbox" class="cp-check" id="c-com-1" data-sync="com-1" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Mkt — 3 casos de éxito + 2 cartas de referencia</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Mié 8 · 15:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d10)">Mkt</span>
+            </div>
+            <span class="cp-nota">Proyectos similares; incluir contacto del cliente para verificación</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-com-2">
+          <input type="checkbox" class="cp-check" id="c-com-2" data-sync="" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Benjamin — Cotización IA (documento PDF separado)</span>
+            <div class="cp-meta">
+              <span class="fecha-badge fecha-dead">Jue 9 · 10:00</span>
+              <span class="rfp-badge rfp-C">Cavas</span>
+              <span class="owner-chip" style="background:var(--d12)">Benjamin</span>
+            </div>
+            <span class="cp-nota">NO incluir dentro de propuesta técnica ni económica principal</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-com-3">
+          <input type="checkbox" class="cp-check" id="c-com-3" data-sync="com-3" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Propuesta económica PDF (documento separado)</span>
+            <div class="cp-meta">
+              <span class="fecha-badge fecha-dead">Jue 9 · 12:30</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d1)">Cluster</span>
+            </div>
+            <span class="cp-nota">Documento independiente; Cavas exige presentación separada</span>
+          </div>
+        </div>
+
+        <div class="cp-row milestone-row" id="row-c-com-4">
+          <input type="checkbox" class="cp-check" id="c-com-4" data-sync="com-4" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title" style="color:#7F1D1D;font-weight:700">⏱ Envío del paquete completo a Sigma</span>
+            <div class="cp-meta">
+              <span class="fecha-badge fecha-dead">Mar 14 · 09:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d1)">Cluster</span>
+            </div>
+            <span class="cp-nota">Técnica PDF + económica PDF + matriz XLSX + cotización IA + anexos</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ADMINISTRATIVA CAVAS -->
+    <div class="area-col adm">
+      <div class="area-header">📋 Administrativa</div>
+      <div class="area-body">
+
+        <div class="cp-row" id="row-c-adm-1">
+          <input type="checkbox" class="cp-check" id="c-adm-1" data-sync="adm-1" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Áreas admin reciben brief y plantillas</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Lun 6 · 14:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d1)">Cluster</span>
+            </div>
+            <span class="cp-nota">CH, Legal, SSP, Mkt, Dir Com</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-adm-2">
+          <input type="checkbox" class="cp-check" id="c-adm-2" data-sync="adm-2" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">SSP recibe plantilla de matriz de cumplimiento (XLSX)</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Lun 6 · 14:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d1)">Cluster</span>
+            </div>
+            <span class="cp-nota">36 RF + RNF con explicaciones detalladas</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-adm-3">
+          <input type="checkbox" class="cp-check" id="c-adm-3" data-sync="adm-3" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">SSP entrega organigrama del equipo del proyecto</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Lun 6 · 18:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d7)">SSP/Silvia</span>
+            </div>
+            <span class="cp-nota">Roles, nombres y % de dedicación; formato solicitado por ambos RFPs</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-adm-4">
+          <input type="checkbox" class="cp-check" id="c-adm-4" data-sync="adm-4" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">CH — CVs del equipo (formato 1 página / persona)</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Mar 7 · 14:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d8)">CH</span>
+            </div>
+            <span class="cp-nota">Cavas: CVs estándar · Títulos: marcar certificaciones .NET/SQL</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-adm-5">
+          <input type="checkbox" class="cp-check" id="c-adm-5" data-sync="adm-5" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">CH — Evidencia REPSE vigente</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Mar 7 · 14:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d8)">CH</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-adm-6">
+          <input type="checkbox" class="cp-check" id="c-adm-6" data-sync="" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Legal — revisión y validación de garantía</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Mié 8 · 12:00</span>
+              <span class="rfp-badge rfp-C">Cavas</span>
+              <span class="owner-chip" style="background:var(--d9)">Legal</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-adm-7">
+          <input type="checkbox" class="cp-check" id="c-adm-7" data-sync="adm-7" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Studios — listado de subcontratistas e IP preexistente</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Mié 8 · 13:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d1)">Cluster</span>
+            </div>
+            <span class="cp-nota">Declaración explícita requerida por ambos RFPs</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-adm-8">
+          <input type="checkbox" class="cp-check" id="c-adm-8" data-sync="adm-8" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">AMS/Silvia — certificaciones y políticas de datos</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Mié 8 · 15:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d7)">AMS</span>
+            </div>
+            <span class="cp-nota">ISO/SOC + política de privacidad y manejo de datos personales</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-adm-9">
+          <input type="checkbox" class="cp-check" id="c-adm-9" data-sync="adm-9" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">SSP — matrices de cumplimiento técnico terminadas (XLSX)</span>
+            <div class="cp-meta">
+              <span class="fecha-badge fecha-dead">Jue 9 · 10:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d7)">SSP/Silvia</span>
+            </div>
+            <span class="cp-nota">Una por RFP; justificaciones en cada celda, no solo "cumple"</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-adm-10">
+          <input type="checkbox" class="cp-check" id="c-adm-10" data-sync="adm-10" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Juan Ramón — firma como representante autorizado</span>
+            <div class="cp-meta">
+              <span class="fecha-badge fecha-dead">Jue 9 · 13:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d13)">Juan Ramón</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-adm-11">
+          <input type="checkbox" class="cp-check" id="c-adm-11" data-sync="adm-11" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Revisión con dirección — aprobación final del paquete Cavas</span>
+            <div class="cp-meta">
+              <span class="fecha-badge fecha-dead">Vie 10 · 18:00</span>
+              <span class="rfp-badge rfp-C">Cavas</span>
+              <span class="owner-chip" style="background:#1E3A5F">Dirección</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-c-adm-12">
+          <input type="checkbox" class="cp-check" id="c-adm-12" data-sync="adm-12" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Atención de comentarios de dirección — Cavas</span>
+            <div class="cp-meta">
+              <span class="fecha-badge fecha-dead">Lun 13 · 18:00</span>
+              <span class="rfp-badge rfp-C">Cavas</span>
+              <span class="owner-chip" style="background:var(--d1)">Cluster</span>
+            </div>
+            <span class="cp-nota">Incorporar ajustes surgidos en la revisión del viernes</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Checklists Cavas -->
+  <div class="cl-section-title">Checklists — Cavas</div>
+  <div class="cl-grid">
+    <div class="cl-card cavas">
+      <h3>Propuesta Técnica — Cavas</h3>
+      <div class="cl-prog-bar"><div class="cl-prog-fill" id="prog-tc"></div></div>
+      <div class="cl-prog-txt" id="txt-tc">0 / 14 completados</div>
+      <div id="list-tc">
+        <div class="cl-item"><input type="checkbox" id="tc1" onchange="upd('tc')"><label for="tc1">Portada y carta de presentación</label><span class="cl-dl">Jue 9·11:30</span></div>
+        <div class="cl-item"><input type="checkbox" id="tc2" onchange="upd('tc')"><label for="tc2">Resumen ejecutivo</label><span class="cl-dl">Jue 9·11:30</span></div>
+        <div class="cl-item"><input type="checkbox" id="tc3" onchange="upd('tc')"><label for="tc3">Entendimiento del problema y alcance</label><span class="cl-dl">Mié 8·14:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tc4" onchange="upd('tc')"><label for="tc4">Arquitectura técnica de la solución (Cluster)</label><span class="cl-dl">Jue 9·09:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tc5" onchange="upd('tc')"><label for="tc5">Sección Apps/App Innovation (Adrian)</label><span class="cl-dl">Mar 7·17:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tc6" onchange="upd('tc')"><label for="tc6">Sección Infraestructura/Cloud (Felix)</label><span class="cl-dl">Mié 8·14:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tc7" onchange="upd('tc')"><label for="tc7">Plan de QA / pruebas (Yare)</label><span class="cl-dl">Jue 9·09:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tc8" onchange="upd('tc')"><label for="tc8">Modelo de seguridad (Daniel)</label><span class="cl-dl">Jue 9·09:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tc9" onchange="upd('tc')"><label for="tc9">Cronograma de proyecto editable (Miguel)</label><span class="cl-dl">Jue 9·09:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tc10" onchange="upd('tc')"><label for="tc10">Diagramas de arquitectura y UX/prototipo</label><span class="cl-dl">Mié 8·16:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tc11" onchange="upd('tc')"><label for="tc11">Componentes IA identificados en propuesta técnica</label><span class="cl-dl">Mar 7·17:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tc12" onchange="upd('tc')"><label for="tc12">Declaración de subcontratistas e IP preexistente</label><span class="cl-dl">Mié 8·13:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tc13" onchange="upd('tc')"><label for="tc13">Esquema de garantía y soporte post-entrega</label><span class="cl-dl">Mié 8·14:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tc14" onchange="upd('tc')"><label for="tc14">Propuesta técnica PDF integrado y revisado</label><span class="cl-dl">Jue 9·11:30</span></div>
+      </div>
+    </div>
+    <div class="cl-card cavas">
+      <h3>Comercial + Administrativa — Cavas</h3>
+      <div class="cl-prog-bar"><div class="cl-prog-fill" id="prog-ac"></div></div>
+      <div class="cl-prog-txt" id="txt-ac">0 / 10 completados</div>
+      <div id="list-ac">
+        <div class="cl-item"><input type="checkbox" id="ac1" onchange="upd('ac')"><label for="ac1">Propuesta económica PDF (documento separado)</label><span class="cl-dl">Jue 9·12:30</span></div>
+        <div class="cl-item"><input type="checkbox" id="ac2" onchange="upd('ac')"><label for="ac2">Cotización componente IA (PDF independiente)</label><span class="cl-dl">Jue 9·10:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="ac3" onchange="upd('ac')"><label for="ac3">Matriz de cumplimiento técnico XLSX (36 RF+RNF)</label><span class="cl-dl">Jue 9·10:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="ac4" onchange="upd('ac')"><label for="ac4">CVs del equipo (1 página por persona)</label><span class="cl-dl">Mar 7·14:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="ac5" onchange="upd('ac')"><label for="ac5">Organigrama del equipo (roles, nombres, % ded.)</label><span class="cl-dl">Lun 6·18:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="ac6" onchange="upd('ac')"><label for="ac6">Certificaciones y políticas de datos</label><span class="cl-dl">Mié 8·15:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="ac7" onchange="upd('ac')"><label for="ac7">Casos de éxito (3) y referencias (2)</label><span class="cl-dl">Mié 8·15:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="ac8" onchange="upd('ac')"><label for="ac8">Garantía revisada por Legal</label><span class="cl-dl">Mié 8·12:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="ac9" onchange="upd('ac')"><label for="ac9">Evidencia REPSE vigente</label><span class="cl-dl">Mar 7·14:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="ac10" onchange="upd('ac')"><label for="ac10">Firma de Juan Ramón en propuesta</label><span class="cl-dl">Jue 9·13:00</span></div>
+      </div>
+    </div>
+  </div>
+  </div><!-- /cards-cavas -->
+
+  <div id="gantt-cavas" class="gantt-wrap" style="display:none"></div>
+
+</div><!-- /panel-cavas -->
+
+<!-- ════════════════════ TÍTULOS ════════════════════ -->
+<div class="proj-panel" id="panel-titulos">
+
+  <div class="view-toggle">
+    <button class="vtoggle active" onclick="setView('titulos','cards')">📋 Tarjetas</button>
+    <button class="vtoggle" onclick="setView('titulos','gantt')">📅 Cronograma</button>
+  </div>
+
+  <div id="cards-titulos">
+  <div class="area-grid">
+
+    <!-- TÉCNICA TÍTULOS -->
+    <div class="area-col tec">
+      <div class="area-header">🔧 Técnica</div>
+      <div class="area-body">
+
+        <div class="cp-row" id="row-t-tec-1">
+          <input type="checkbox" class="cp-check" id="t-tec-1" data-sync="tec-1" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Respuestas a preguntas de aclaración enviadas a Sigma</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Lun 6 · 09:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d1)">Cluster</span>
+            </div>
+            <span class="cp-nota">Consolidado de 10 preguntas; confirmar recepción por Sigma</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-tec-2">
+          <input type="checkbox" class="cp-check" id="t-tec-2" data-sync="tec-2" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Kickoff técnico — distribución de secciones confirmada</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Lun 6 · 10:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d1)">Cluster</span>
+            </div>
+            <span class="cp-nota">Adrian: Apps · Felix: Infra/Cloud · Cluster: Arquitectura</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-tec-3">
+          <input type="checkbox" class="cp-check" id="t-tec-3" data-sync="" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Adrian — borrador Apps/App Innovation</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Mar 7 · 17:00</span>
+              <span class="rfp-badge rfp-T">Títulos</span>
+              <span class="owner-chip" style="background:var(--d2)">Adrian</span>
+            </div>
+            <span class="cp-nota">.NET/SQL Server, integración SAP, trazabilidad de títulos</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-tec-4">
+          <input type="checkbox" class="cp-check" id="t-tec-4" data-sync="tec-4" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Yare, Daniel y Miguel reciben borradores técnicos</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Mié 8 · 10:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d4)">Yare</span>
+              <span class="owner-chip" style="background:var(--d6)">Daniel</span>
+              <span class="owner-chip" style="background:var(--d5)">Miguel</span>
+            </div>
+            <span class="cp-nota">Inicio de QA, Seguridad y PMO — dependen de entrega de Adrian</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-tec-5">
+          <input type="checkbox" class="cp-check" id="t-tec-5" data-sync="" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Felix — Infraestructura / Cloud</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Mié 8 · 14:00</span>
+              <span class="rfp-badge rfp-T">Títulos</span>
+              <span class="owner-chip" style="background:var(--d3)">Felix</span>
+            </div>
+            <span class="cp-nota">Hosting .NET + SQL Server, certificaciones, ambiente de pruebas</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-tec-6">
+          <input type="checkbox" class="cp-check" id="t-tec-6" data-sync="tec-7" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Yare — QA / Plan de pruebas</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Jue 9 · 09:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d4)">Yare</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-tec-7">
+          <input type="checkbox" class="cp-check" id="t-tec-7" data-sync="tec-8" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Daniel — Seguridad / Modelo de seguridad</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Jue 9 · 09:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d6)">Daniel</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-tec-8">
+          <input type="checkbox" class="cp-check" id="t-tec-8" data-sync="tec-9" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Miguel — Cronograma de proyecto (Gantt con hitos)</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Jue 9 · 09:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d5)">Miguel</span>
+            </div>
+            <span class="cp-nota">Gantt con hitos y responsables</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-tec-9">
+          <input type="checkbox" class="cp-check" id="t-tec-9" data-sync="tec-10" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Cluster — Propuesta técnica integrada PDF</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Vie 10 · 14:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d1)">Cluster</span>
+            </div>
+            <span class="cp-nota">Integra todas las secciones; portada, tabla de contenido y formato final</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- COMERCIAL TÍTULOS -->
+    <div class="area-col com">
+      <div class="area-header">💰 Comercial</div>
+      <div class="area-body">
+
+        <div class="cp-row" id="row-t-com-1">
+          <input type="checkbox" class="cp-check" id="t-com-1" data-sync="com-1" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Mkt — 3 casos de éxito + 2 cartas de referencia</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Mié 8 · 15:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d10)">Mkt</span>
+            </div>
+            <span class="cp-nota">Proyectos similares; incluir contacto del cliente para verificación</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-com-2">
+          <input type="checkbox" class="cp-check" id="t-com-2" data-sync="com-3" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Propuesta económica PDF (documento separado)</span>
+            <div class="cp-meta">
+              <span class="fecha-badge fecha-dead">Jue 9 · 12:30</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d1)">Cluster</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cp-row milestone-row" id="row-t-com-3">
+          <input type="checkbox" class="cp-check" id="t-com-3" data-sync="com-4" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title" style="color:#7F1D1D;font-weight:700">⏱ Envío del paquete completo a Sigma</span>
+            <div class="cp-meta">
+              <span class="fecha-badge fecha-dead">Mar 14 · 09:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d1)">Cluster</span>
+            </div>
+            <span class="cp-nota">Técnica PDF + económica PDF + matriz XLSX + anexos</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ADMINISTRATIVA TÍTULOS -->
+    <div class="area-col adm">
+      <div class="area-header">📋 Administrativa</div>
+      <div class="area-body">
+
+        <div class="cp-row" id="row-t-adm-1">
+          <input type="checkbox" class="cp-check" id="t-adm-1" data-sync="adm-1" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Áreas admin reciben brief y plantillas</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Lun 6 · 14:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d1)">Cluster</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-adm-2">
+          <input type="checkbox" class="cp-check" id="t-adm-2" data-sync="adm-2" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">SSP recibe plantilla de matriz de cumplimiento (XLSX)</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Lun 6 · 14:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d1)">Cluster</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-adm-3">
+          <input type="checkbox" class="cp-check" id="t-adm-3" data-sync="adm-3" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">SSP entrega organigrama del equipo del proyecto</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Lun 6 · 18:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d7)">SSP/Silvia</span>
+            </div>
+            <span class="cp-nota">Roles, nombres y % de dedicación</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-adm-4">
+          <input type="checkbox" class="cp-check" id="t-adm-4" data-sync="adm-4" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">CH — CVs del equipo (con certificaciones .NET/SQL marcadas)</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Mar 7 · 14:00</span>
+              <span class="rfp-badge rfp-T">Títulos</span>
+              <span class="owner-chip" style="background:var(--d8)">CH</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-adm-5">
+          <input type="checkbox" class="cp-check" id="t-adm-5" data-sync="adm-5" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">CH — Evidencia REPSE vigente</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Mar 7 · 14:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d8)">CH</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-adm-6">
+          <input type="checkbox" class="cp-check" id="t-adm-6" data-sync="" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Legal — declaración de no conflicto de interés</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Mié 8 · 12:00</span>
+              <span class="rfp-badge rfp-T">Títulos</span>
+              <span class="owner-chip" style="background:var(--d9)">Legal</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-adm-7">
+          <input type="checkbox" class="cp-check" id="t-adm-7" data-sync="adm-7" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Studios — subcontratistas e IP preexistente</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Mié 8 · 13:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d1)">Cluster</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-adm-8">
+          <input type="checkbox" class="cp-check" id="t-adm-8" data-sync="adm-8" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">AMS/Silvia — certificaciones y políticas de datos</span>
+            <div class="cp-meta">
+              <span class="fecha-badge">Mié 8 · 15:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d7)">AMS</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-adm-9">
+          <input type="checkbox" class="cp-check" id="t-adm-9" data-sync="adm-9" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">SSP — matrices de cumplimiento técnico terminadas (XLSX)</span>
+            <div class="cp-meta">
+              <span class="fecha-badge fecha-dead">Jue 9 · 10:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d7)">SSP/Silvia</span>
+            </div>
+            <span class="cp-nota">Justificaciones en cada celda, no solo "cumple"</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-adm-10">
+          <input type="checkbox" class="cp-check" id="t-adm-10" data-sync="adm-10" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Juan Ramón — firma como representante autorizado</span>
+            <div class="cp-meta">
+              <span class="fecha-badge fecha-dead">Jue 9 · 13:00</span>
+              <span class="rfp-badge rfp-A">C + T</span>
+              <span class="owner-chip" style="background:var(--d13)">Juan Ramón</span>
+            </div>
+            <span class="cp-nota">Títulos requiere firma explícita del representante legal</span>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-adm-11">
+          <input type="checkbox" class="cp-check" id="t-adm-11" data-sync="adm-11" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Revisión con dirección — aprobación final del paquete Títulos</span>
+            <div class="cp-meta">
+              <span class="fecha-badge fecha-dead">Vie 10 · 18:00</span>
+              <span class="rfp-badge rfp-T">Títulos</span>
+              <span class="owner-chip" style="background:#1E3A5F">Dirección</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cp-row" id="row-t-adm-12">
+          <input type="checkbox" class="cp-check" id="t-adm-12" data-sync="adm-12" onchange="toggleRow(this)">
+          <div class="cp-body">
+            <span class="cp-title">Atención de comentarios de dirección — Títulos</span>
+            <div class="cp-meta">
+              <span class="fecha-badge fecha-dead">Lun 13 · 18:00</span>
+              <span class="rfp-badge rfp-T">Títulos</span>
+              <span class="owner-chip" style="background:var(--d1)">Cluster</span>
+            </div>
+            <span class="cp-nota">Incorporar ajustes surgidos en la revisión del viernes</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Checklists Títulos -->
+  <div class="cl-section-title">Checklists — Títulos</div>
+  <div class="cl-grid">
+    <div class="cl-card titulos">
+      <h3>Propuesta Técnica — Títulos</h3>
+      <div class="cl-prog-bar"><div class="cl-prog-fill" id="prog-tt"></div></div>
+      <div class="cl-prog-txt" id="txt-tt">0 / 12 completados</div>
+      <div id="list-tt">
+        <div class="cl-item"><input type="checkbox" id="tt1" onchange="upd('tt')"><label for="tt1">Portada y carta de presentación</label><span class="cl-dl">Jue 9·11:30</span></div>
+        <div class="cl-item"><input type="checkbox" id="tt2" onchange="upd('tt')"><label for="tt2">Entendimiento del sistema de títulos educativos</label><span class="cl-dl">Mié 8·14:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tt3" onchange="upd('tt')"><label for="tt3">Arquitectura .NET + SQL Server (Adrian)</label><span class="cl-dl">Mar 7·17:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tt4" onchange="upd('tt')"><label for="tt4">Infraestructura / hosting (Felix)</label><span class="cl-dl">Mié 8·14:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tt5" onchange="upd('tt')"><label for="tt5">Plan de QA / pruebas (Yare)</label><span class="cl-dl">Jue 9·09:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tt6" onchange="upd('tt')"><label for="tt6">Modelo de seguridad (Daniel)</label><span class="cl-dl">Jue 9·09:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tt7" onchange="upd('tt')"><label for="tt7">Cronograma con hitos y responsables (Miguel)</label><span class="cl-dl">Jue 9·09:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tt8" onchange="upd('tt')"><label for="tt8">Integración SAP / trazabilidad de títulos</label><span class="cl-dl">Mar 7·17:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tt9" onchange="upd('tt')"><label for="tt9">Ambiente de pruebas y metodología de migración</label><span class="cl-dl">Mié 8·16:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tt10" onchange="upd('tt')"><label for="tt10">Identificación de subcontratistas</label><span class="cl-dl">Mié 8·13:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tt11" onchange="upd('tt')"><label for="tt11">Excel de cumplimiento técnico (Títulos)</label><span class="cl-dl">Jue 9·10:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="tt12" onchange="upd('tt')"><label for="tt12">Propuesta técnica PDF integrado y revisado</label><span class="cl-dl">Jue 9·11:30</span></div>
+      </div>
+    </div>
+    <div class="cl-card titulos">
+      <h3>Comercial + Administrativa — Títulos</h3>
+      <div class="cl-prog-bar"><div class="cl-prog-fill" id="prog-at"></div></div>
+      <div class="cl-prog-txt" id="txt-at">0 / 9 completados</div>
+      <div id="list-at">
+        <div class="cl-item"><input type="checkbox" id="at1" onchange="upd('at')"><label for="at1">Firma del representante autorizado (Juan Ramón)</label><span class="cl-dl">Jue 9·13:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="at2" onchange="upd('at')"><label for="at2">Certificaciones .NET/SQL Server del equipo</label><span class="cl-dl">Mar 7·14:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="at3" onchange="upd('at')"><label for="at3">Declaración de no conflicto de interés</label><span class="cl-dl">Mié 8·12:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="at4" onchange="upd('at')"><label for="at4">Organigrama del equipo del proyecto</label><span class="cl-dl">Lun 6·18:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="at5" onchange="upd('at')"><label for="at5">CVs bSide (1 página, certif. .NET/SQL marcadas)</label><span class="cl-dl">Mar 7·14:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="at6" onchange="upd('at')"><label for="at6">Evidencia REPSE vigente</label><span class="cl-dl">Mar 7·14:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="at7" onchange="upd('at')"><label for="at7">3 proyectos similares con descripción</label><span class="cl-dl">Mié 8·15:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="at8" onchange="upd('at')"><label for="at8">2 cartas de referencia de clientes</label><span class="cl-dl">Mié 8·15:00</span></div>
+        <div class="cl-item"><input type="checkbox" id="at9" onchange="upd('at')"><label for="at9">Garantía 6 meses confirmada por Legal</label><span class="cl-dl">Mié 8·12:00</span></div>
+      </div>
+    </div>
+  </div>
+  </div><!-- /cards-titulos -->
+
+  <div id="gantt-titulos" class="gantt-wrap" style="display:none"></div>
+
+</div><!-- /panel-titulos -->
+
+<footer>bSide Expertos en Soluciones TI · RFP Sigma Cavas &amp; Títulos · Octubre 2026</footer>
+
+<script>
+/* ── Tab switching ── */
+function switchTab(proj){
+  document.querySelectorAll('.proj-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.proj-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelector('.proj-tab.'+proj+'-tab').classList.add('active');
+  document.getElementById('panel-'+proj).classList.add('active');
+  try{localStorage.setItem('rfp-sigma-tab',proj)}catch(e){}
+}
+
+/* ── Toggle card done ── */
+function toggleRow(cb){
+  const row = cb.closest('.cp-row');
+  if(cb.checked) row.classList.add('done-card');
+  else row.classList.remove('done-card');
+  syncShared(cb);
+}
+
+/* ── Sync shared items across tabs ── */
+function syncShared(src){
+  const sid = src.dataset.sync;
+  if(!sid) return;
+  document.querySelectorAll('[data-sync="'+sid+'"]').forEach(el=>{
+    if(el===src) return;
+    el.checked = src.checked;
+    const row = el.closest('.cp-row');
+    if(src.checked) row.classList.add('done-card');
+    else row.classList.remove('done-card');
+  });
+}
+
+/* ── Checklist progress ── */
+const TOTALS={tc:14,ac:10,tt:12,at:9};
+function upd(id){
+  const list=document.getElementById('list-'+id);
+  const checks=list.querySelectorAll('input[type=checkbox]');
+  const done=[...checks].filter(c=>c.checked).length;
+  const pct=Math.round(done/TOTALS[id]*100);
+  document.getElementById('prog-'+id).style.width=pct+'%';
+  document.getElementById('txt-'+id).textContent=done+' / '+TOTALS[id]+' completados';
+}
+
+/* ══════════════════════════════════════════
+   GANTT / CRONOGRAMA
+   ══════════════════════════════════════════ */
+const GDAYS=['Lun 6','Mar 7','Mié 8','Jue 9','Vie 10','Lun 13','Mar 14'];
+const GCFG={
+  tec:{color:'#2563EB',label:'🔧 Técnica'},
+  com:{color:'#D97706',label:'💰 Comercial'},
+  adm:{color:'#0F766E',label:'📋 Administrativa'}
+};
+const GT={LW:252,DW:295,RH:46,HDR:62,SEC:32,HPD:9,H_START:9};
+
+function gx(d,h){return GT.LW+d*GT.DW+((h-GT.H_START)/GT.HPD)*GT.DW;}
+function ge(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function gt2(s,n){return s.length>n?s.slice(0,n)+'…':s;}
+function isDarkMode(){return document.documentElement.getAttribute('data-theme')==='dark'||(!document.documentElement.getAttribute('data-theme')&&window.matchMedia('(prefers-color-scheme:dark)').matches);}
+function fdt(d,h){
+  const day=GDAYS[d]||'';
+  const hh=Math.floor(h), mm=Math.round((h%1)*60);
+  return `${day} · ${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`;
+}
+
+const GTASKS={
+cavas:{
+  tec:[
+    {l:'Respuestas aclaración',sd:0,sh:8,ed:0,eh:9,ow:'Cluster',oc:'#6D28D9'},
+    {l:'Kickoff técnico',sd:0,sh:9,ed:0,eh:10,ow:'Cluster',oc:'#6D28D9'},
+    {l:'Adrian — Apps/App Innovation',sd:0,sh:11,ed:1,eh:17,ow:'Adrian',oc:'#0F766E'},
+    {l:'Felix — Infra/Cloud',sd:0,sh:11,ed:2,eh:14,ow:'Felix',oc:'#1D4ED8'},
+    {l:'Benjamin — Cotización IA',sd:1,sh:17,ed:2,eh:16,ow:'Benjamin',oc:'#1E40AF'},
+    {l:'Yare — QA / Plan de pruebas',sd:2,sh:10,ed:3,eh:9,ow:'Yare',oc:'#BE185D'},
+    {l:'Daniel — Seguridad',sd:2,sh:10,ed:3,eh:9,ow:'Daniel',oc:'#374151'},
+    {l:'Miguel — PMO / Cronograma',sd:2,sh:10,ed:3,eh:9,ow:'Miguel',oc:'#92400E'},
+    {l:'Cluster — Propuesta técnica PDF',sd:4,sh:9,ed:4,eh:14,ow:'Cluster',oc:'#6D28D9'}
+  ],
+  com:[
+    {l:'Mkt — Casos éxito + cartas',sd:0,sh:10,ed:2,eh:15,ow:'Mkt',oc:'#15803D'},
+    {l:'Benjamin — Cotización IA PDF',sd:2,sh:16,ed:3,eh:10,ow:'Benjamin',oc:'#1E40AF'},
+    {l:'Propuesta económica PDF',sd:3,sh:11.5,ed:3,eh:12.5,ow:'Cluster',oc:'#6D28D9'},
+    {l:'⏱ Envío paquete a Sigma',sd:6,sh:9,ed:6,eh:10,ow:'Cluster',oc:'#DC2626',dead:1}
+  ],
+  adm:[
+    {l:'Áreas admin — brief + plantillas',sd:0,sh:10,ed:0,eh:14,ow:'Cluster',oc:'#6D28D9'},
+    {l:'SSP — Organigrama equipo',sd:0,sh:14,ed:0,eh:18,ow:'SSP',oc:'#C2410C'},
+    {l:'CH — CVs del equipo',sd:1,sh:8,ed:1,eh:14,ow:'CH',oc:'#0369A1'},
+    {l:'CH — Evidencia REPSE',sd:1,sh:8,ed:1,eh:14,ow:'CH',oc:'#0369A1'},
+    {l:'Legal — Revisión garantía',sd:1,sh:14,ed:2,eh:12,ow:'Legal',oc:'#9D174D'},
+    {l:'Studios — Subcontratistas/IP',sd:0,sh:10,ed:2,eh:13,ow:'Cluster',oc:'#6D28D9'},
+    {l:'AMS/Silvia — Certificaciones',sd:1,sh:8,ed:2,eh:15,ow:'AMS',oc:'#C2410C'},
+    {l:'SSP — Matrices cumplimiento',sd:2,sh:15,ed:3,eh:10,ow:'SSP',oc:'#C2410C'},
+    {l:'Juan Ramón — Firma',sd:3,sh:12.5,ed:3,eh:13,ow:'Juan Ramón',oc:'#374151'},
+    {l:'Revisión con dirección',sd:4,sh:16,ed:4,eh:18,ow:'Dirección',oc:'#1E3A5F'},
+    {l:'Atención de comentarios',sd:5,sh:9,ed:5,eh:18,ow:'Cluster',oc:'#6D28D9'}
+  ]
+},
+titulos:{
+  tec:[
+    {l:'Respuestas aclaración',sd:0,sh:8,ed:0,eh:9,ow:'Cluster',oc:'#6D28D9'},
+    {l:'Kickoff técnico',sd:0,sh:9,ed:0,eh:10,ow:'Cluster',oc:'#6D28D9'},
+    {l:'Adrian — Apps .NET/SQL/SAP',sd:0,sh:11,ed:1,eh:17,ow:'Adrian',oc:'#0F766E'},
+    {l:'Felix — Infra hosting .NET',sd:0,sh:11,ed:2,eh:14,ow:'Felix',oc:'#1D4ED8'},
+    {l:'Yare — QA / Plan de pruebas',sd:2,sh:10,ed:3,eh:9,ow:'Yare',oc:'#BE185D'},
+    {l:'Daniel — Seguridad',sd:2,sh:10,ed:3,eh:9,ow:'Daniel',oc:'#374151'},
+    {l:'Miguel — Gantt con hitos',sd:2,sh:10,ed:3,eh:9,ow:'Miguel',oc:'#92400E'},
+    {l:'Cluster — Propuesta técnica PDF',sd:4,sh:9,ed:4,eh:14,ow:'Cluster',oc:'#6D28D9'}
+  ],
+  com:[
+    {l:'Mkt — Casos éxito + cartas',sd:0,sh:10,ed:2,eh:15,ow:'Mkt',oc:'#15803D'},
+    {l:'Propuesta económica PDF',sd:3,sh:11.5,ed:3,eh:12.5,ow:'Cluster',oc:'#6D28D9'},
+    {l:'⏱ Envío paquete a Sigma',sd:6,sh:9,ed:6,eh:10,ow:'Cluster',oc:'#DC2626',dead:1}
+  ],
+  adm:[
+    {l:'Áreas admin — brief + plantillas',sd:0,sh:10,ed:0,eh:14,ow:'Cluster',oc:'#6D28D9'},
+    {l:'SSP — Organigrama equipo',sd:0,sh:14,ed:0,eh:18,ow:'SSP',oc:'#C2410C'},
+    {l:'CH — CVs .NET/SQL certificados',sd:1,sh:8,ed:1,eh:14,ow:'CH',oc:'#0369A1'},
+    {l:'CH — Evidencia REPSE',sd:1,sh:8,ed:1,eh:14,ow:'CH',oc:'#0369A1'},
+    {l:'Legal — Declaración no conflicto',sd:1,sh:14,ed:2,eh:12,ow:'Legal',oc:'#9D174D'},
+    {l:'Studios — Subcontratistas/IP',sd:0,sh:10,ed:2,eh:13,ow:'Cluster',oc:'#6D28D9'},
+    {l:'AMS/Silvia — Certificaciones',sd:1,sh:8,ed:2,eh:15,ow:'AMS',oc:'#C2410C'},
+    {l:'SSP — Matrices cumplimiento',sd:2,sh:15,ed:3,eh:10,ow:'SSP',oc:'#C2410C'},
+    {l:'Juan Ramón — Firma',sd:3,sh:12.5,ed:3,eh:13,ow:'Juan Ramón',oc:'#374151'},
+    {l:'Revisión con dirección',sd:4,sh:16,ed:4,eh:18,ow:'Dirección',oc:'#1E3A5F'},
+    {l:'Atención de comentarios',sd:5,sh:9,ed:5,eh:18,ow:'Cluster',oc:'#6D28D9'}
+  ]
+}
+};
+
+// Build and cache SVG gantt for a project
+const _ganttBuilt={};
+function buildGantt(proj){
+  if(_ganttBuilt[proj]===isDarkMode()) return;
+  _ganttBuilt[proj]=isDarkMode();
+
+  const dark=isDarkMode();
+  const C={
+    bg:       dark?'#1E293B':'#FFFFFF',
+    hdrBg:    dark?'#0F172A':'#F1F5F9',
+    lblBg:    dark?'#0F172A':'#F8FAFC',
+    dayEven:  dark?'#1A2744':'#EEF3FA',
+    dayOdd:   dark?'#152038':'#E2EAF5',
+    rowStripe:dark?'rgba(255,255,255,0.04)':'rgba(0,0,0,0.03)',
+    text:     dark?'#E2E8F0':'#1E293B',
+    textMid:  dark?'#CBD5E1':'#374151',
+    gray:     dark?'#94A3B8':'#6B7280',
+    navy:     dark?'#A8C4E5':'#1E3A5F',
+    border:   dark?'#334155':'#CBD5E1',
+    divider:  dark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.07)',
+    tickLine: dark?'#334155':'#CBD5E1',
+    tickTxt:  dark?'#64748B':'#94A3B8',
+  };
+
+  const tasks=GTASKS[proj];
+  const ND=GDAYS.length;
+  const W=GT.LW+ND*GT.DW+4;
+
+  let secs=[];
+  Object.entries(GCFG).forEach(([key,cfg])=>{
+    const ts=tasks[key]||[];
+    if(!ts.length) return;
+    secs.push({key,cfg,ts});
+  });
+
+  const HDR_DAY=32; // top zone: day name
+  const HDR_HR=GT.HDR-HDR_DAY; // bottom zone: hour ticks
+  const H=GT.HDR + secs.reduce((a,s)=>a+GT.SEC+s.ts.length*GT.RH,0)+8;
+
+  let svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" style="display:block;font-family:Inter,sans-serif;background:${C.bg}">`;
+
+  // ── DEFS: clipPaths for bar text ──
+  svg+=`<defs>`;
+  secs.forEach(s=>{
+    s.ts.forEach((t,i)=>{
+      const rid=`${proj}-${s.key}-${i}`;
+      const x1=gx(t.sd,t.sh), x2=gx(t.ed,t.eh);
+      const bw=Math.max(0,x2-x1-8);
+      svg+=`<clipPath id="cp-${rid}"><rect x="${x1+4}" y="0" width="${Math.max(0,bw)}" height="${GT.RH}"/></clipPath>`;
+    });
+  });
+  svg+=`</defs>`;
+
+  // ── HEADER BACKGROUND ──
+  svg+=`<rect x="0" y="0" width="${W}" height="${HDR_DAY}" fill="${C.hdrBg}"/>`;
+  svg+=`<rect x="0" y="${HDR_DAY}" width="${W}" height="${HDR_HR}" fill="${dark?'#0A1628':'#E8EFF8'}"/>`;
+
+  // label column header
+  svg+=`<rect x="0" y="0" width="${GT.LW}" height="${GT.HDR}" fill="${C.lblBg}"/>`;
+  svg+=`<text x="12" y="${HDR_DAY/2+5}" font-size="11" font-weight="600" fill="${C.gray}" letter-spacing=".3">TAREA / RESPONSABLE</text>`;
+
+  // ── DAY COLUMNS ──
+  for(let d=0;d<ND;d++){
+    const dx=GT.LW+d*GT.DW;
+
+    // day header top zone
+    svg+=`<rect x="${dx}" y="0" width="${GT.DW}" height="${HDR_DAY}" fill="${d%2===0?C.dayEven:C.dayOdd}"/>`;
+    svg+=`<text x="${dx+GT.DW/2}" y="${HDR_DAY/2+6}" text-anchor="middle" font-size="14" font-weight="700" fill="${C.navy}" letter-spacing=".5">${ge(GDAYS[d])}</text>`;
+
+    // hour tick zone (bottom of header)
+    svg+=`<rect x="${dx}" y="${HDR_DAY}" width="${GT.DW}" height="${HDR_HR}" fill="${d%2===0?C.dayEven:C.dayOdd}" opacity="0.6"/>`;
+    for(let h=GT.H_START;h<=GT.H_START+GT.HPD;h++){
+      const hx=gx(d,h);
+      const isEven=h%2===0;
+      svg+=`<line x1="${hx}" y1="${HDR_DAY+(isEven?4:10)}" x2="${hx}" y2="${GT.HDR}" stroke="${C.tickLine}" stroke-width="${isEven?1.5:1}"/>`;
+      if(isEven) svg+=`<text x="${hx+3}" y="${GT.HDR-4}" font-size="10" fill="${C.tickTxt}" font-weight="600">${h}:00</text>`;
+    }
+
+    // vertical light lines through body (every 1h)
+    for(let h=GT.H_START;h<=GT.H_START+GT.HPD;h++){
+      const hx=gx(d,h);
+      svg+=`<line x1="${hx}" y1="${GT.HDR}" x2="${hx}" y2="${H}" stroke="${C.divider}" stroke-width="${h%2===0?1.2:0.7}" stroke-dasharray="${h%2===0?'3,5':'2,6'}"/>`;
+    }
+  }
+
+  // ── VERTICAL DAY SEPARATORS (full height, solid) ──
+  for(let d=1;d<=ND;d++){
+    svg+=`<line x1="${GT.LW+d*GT.DW}" y1="0" x2="${GT.LW+d*GT.DW}" y2="${H}" stroke="${C.border}" stroke-width="1.5"/>`;
+  }
+  // label column right border
+  svg+=`<line x1="${GT.LW}" y1="0" x2="${GT.LW}" y2="${H}" stroke="${C.border}" stroke-width="2"/>`;
+  // header bottom border
+  svg+=`<line x1="0" y1="${GT.HDR}" x2="${W}" y2="${GT.HDR}" stroke="${C.border}" stroke-width="1.5"/>`;
+
+  // ── SECTIONS & BARS ──
+  let cy=GT.HDR;
+  secs.forEach(s=>{
+    // section header row
+    svg+=`<rect x="0" y="${cy}" width="${W}" height="${GT.SEC}" fill="${s.cfg.color}30"/>`;
+    svg+=`<line x1="0" y1="${cy}" x2="${W}" y2="${cy}" stroke="${s.cfg.color}60" stroke-width="1"/>`;
+    svg+=`<rect x="0" y="${cy}" width="4" height="${GT.SEC}" fill="${s.cfg.color}"/>`;
+    svg+=`<text x="14" y="${cy+GT.SEC/2+5}" font-size="13" font-weight="700" fill="${s.cfg.color}">${ge(s.cfg.label)}</text>`;
+    cy+=GT.SEC;
+
+    s.ts.forEach((t,i)=>{
+      const rid=`${proj}-${s.key}-${i}`;
+      const ry=cy+i*GT.RH;
+      const mid=ry+GT.RH/2;
+
+      // alternating row fill
+      if(i%2===0) svg+=`<rect x="0" y="${ry}" width="${W}" height="${GT.RH}" fill="${C.bg}"/>`;
+      else svg+=`<rect x="0" y="${ry}" width="${W}" height="${GT.RH}" fill="${C.rowStripe}"/>`;
+
+      // row bottom separator
+      svg+=`<line x1="0" y1="${ry+GT.RH-1}" x2="${W}" y2="${ry+GT.RH-1}" stroke="${C.divider}" stroke-width="1"/>`;
+
+      // label column bg
+      svg+=`<rect x="0" y="${ry}" width="${GT.LW}" height="${GT.RH}" fill="${C.lblBg}" opacity="0.6"/>`;
+
+      // task name (line 1)
+      const maxChars=Math.floor((GT.LW-22)/6.4);
+      svg+=`<text x="14" y="${ry+17}" font-size="11" fill="${C.text}" font-weight="600">${ge(gt2(t.l,maxChars))}</text>`;
+
+      // date range (line 2)
+      const dtRange=`${fdt(t.sd,t.sh)}  →  ${fdt(t.ed,t.eh)}`;
+      svg+=`<text x="14" y="${ry+31}" font-size="9" fill="${C.gray}">${ge(dtRange)}</text>`;
+
+      // ── BAR ──
+      const bx=gx(t.sd,t.sh);
+      const bx2=gx(t.ed,t.eh);
+      const bw=Math.max(6,bx2-bx);
+      const barColor=t.dead?'#DC2626':s.cfg.color;
+      const barH=GT.RH-12;
+      const barY=ry+6;
+
+      // bar shadow / glow
+      if(!dark) svg+=`<rect x="${bx+1}" y="${barY+2}" width="${bw}" height="${barH}" rx="5" fill="${barColor}" opacity="0.2"/>`;
+
+      // bar body
+      svg+=`<rect x="${bx}" y="${barY}" width="${bw}" height="${barH}" rx="5" fill="${barColor}" opacity="${t.dead?'1':'0.9'}"/>`;
+
+      // inner highlight strip
+      if(bw>12) svg+=`<rect x="${bx+3}" y="${barY+2}" width="${Math.min(bw-6,60)}" height="3" rx="2" fill="rgba(255,255,255,0.25)"/>`;
+
+      // label inside bar
+      if(bw>=36){
+        const availChars=Math.floor((bw-14)/6.2);
+        const txt=gt2(t.ow,availChars);
+        svg+=`<text x="${bx+8}" y="${mid+4}" font-size="11" font-weight="700" fill="#fff" opacity="0.95" clip-path="url(#cp-${rid})">${ge(txt)}</text>`;
+      }
+
+      // deadline tick + triangle at bar end
+      const endX=gx(t.ed,t.eh);
+      const deadColor=t.dead?'#DC2626':t.oc||s.cfg.color;
+      svg+=`<line x1="${endX}" y1="${barY-3}" x2="${endX}" y2="${barY+barH+3}" stroke="${deadColor}" stroke-width="2" opacity="0.85"/>`;
+      svg+=`<polygon points="${endX-4},${barY+barH+3} ${endX+4},${barY+barH+3} ${endX},${barY+barH+8}" fill="${deadColor}" opacity="0.85"/>`;
+
+      // ⚠ deadline: striped end cap
+      if(t.dead){
+        const str=`<pattern id="str-${rid}" x="0" y="0" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" stroke="#fff" stroke-width="2" opacity="0.4"/></pattern>`;
+        if(!svg.includes(`id="str-${rid}"`)) svg=svg.replace('</defs>',str+'</defs>');
+        svg+=`<rect x="${bx}" y="${barY}" width="${bw}" height="${barH}" rx="5" fill="url(#str-${rid})"/>`;
+      }
+    });
+    cy+=s.ts.length*GT.RH;
+  });
+
+  // ── BOTTOM BORDER ──
+  svg+=`<line x1="0" y1="${H-1}" x2="${W}" y2="${H-1}" stroke="${C.border}" stroke-width="1.5"/>`;
+  svg+=`</svg>`;
+
+  document.getElementById('gantt-'+proj).innerHTML=svg;
+}
+
+// Toggle cards/gantt view for a project panel
+function setView(proj,view){
+  const panel=document.getElementById('panel-'+proj);
+  panel.querySelectorAll('.vtoggle').forEach(b=>{
+    b.classList.toggle('active',
+      (view==='cards'&&b.textContent.includes('Tarjetas'))||
+      (view==='gantt'&&b.textContent.includes('Cronograma'))
+    );
+  });
+  const cards=document.getElementById('cards-'+proj);
+  const gantt=document.getElementById('gantt-'+proj);
+  if(view==='gantt'){
+    cards.style.display='none';
+    gantt.style.display='block';
+    // Re-render if theme changed since last build
+    const dark=isDarkMode();
+    if(_ganttBuilt[proj] && _ganttBuilt[proj]!==dark){
+      _ganttBuilt[proj]=false;
+      document.getElementById('gantt-'+proj).innerHTML='';
+    }
+    buildGantt(proj);
+    _ganttBuilt[proj]=dark;
+  } else {
+    cards.style.display='';
+    gantt.style.display='none';
+  }
+}
+
+/* ── Persist state ── */
+function saveState(){
+  const s={};
+  document.querySelectorAll('input[type=checkbox]').forEach(c=>{if(c.id)s[c.id]=c.checked});
+  try{localStorage.setItem('rfp-sigma-ctl',JSON.stringify(s))}catch(e){}
+}
+
+function loadState(){
+  try{
+    const s=JSON.parse(localStorage.getItem('rfp-sigma-ctl')||'{}');
+    Object.entries(s).forEach(([id,val])=>{
+      const el=document.getElementById(id);
+      if(!el)return;
+      el.checked=val;
+      const row=el.closest('.cp-row');
+      if(row){if(val)row.classList.add('done-card');else row.classList.remove('done-card');}
+    });
+    ['tc','ac','tt','at'].forEach(upd);
+  }catch(e){}
+  // restore tab
+  try{
+    const tab=localStorage.getItem('rfp-sigma-tab');
+    if(tab==='titulos') switchTab('titulos');
+  }catch(e){}
+}
+
+document.querySelectorAll('input[type=checkbox]').forEach(c=>{
+  c.addEventListener('change',saveState);
+});
+
+const CARD_STARTS={
+  'c-tec-1':'Lun 6 · 08:00','c-tec-2':'Lun 6 · 09:00','c-tec-3':'Lun 6 · 11:00',
+  'c-tec-5':'Lun 6 · 11:00','c-tec-6':'Mar 7 · 17:00',
+  'c-tec-7':'Mié 8 · 10:00','c-tec-8':'Mié 8 · 10:00','c-tec-9':'Mié 8 · 10:00',
+  'c-tec-10':'Vie 10 · 09:00',
+  'c-com-1':'Lun 6 · 10:00','c-com-2':'Mié 8 · 16:00',
+  'c-com-3':'Jue 9 · 11:30','c-com-4':'Mar 14 · 09:00',
+  'c-adm-1':'Lun 6 · 10:00','c-adm-2':'Lun 6 · 10:00','c-adm-3':'Lun 6 · 14:00',
+  'c-adm-4':'Mar 7 · 08:00','c-adm-5':'Mar 7 · 08:00','c-adm-6':'Mar 7 · 14:00',
+  'c-adm-7':'Lun 6 · 10:00','c-adm-8':'Mar 7 · 08:00',
+  'c-adm-9':'Mié 8 · 15:00','c-adm-10':'Jue 9 · 12:30',
+  'c-adm-11':'Vie 10 · 16:00','c-adm-12':'Lun 13 · 09:00',
+  't-tec-1':'Lun 6 · 08:00','t-tec-2':'Lun 6 · 09:00','t-tec-3':'Lun 6 · 11:00',
+  't-tec-5':'Lun 6 · 11:00',
+  't-tec-6':'Mié 8 · 10:00','t-tec-7':'Mié 8 · 10:00','t-tec-8':'Mié 8 · 10:00',
+  't-tec-9':'Vie 10 · 09:00',
+  't-com-1':'Lun 6 · 10:00','t-com-2':'Jue 9 · 11:30','t-com-3':'Mar 14 · 09:00',
+  't-adm-1':'Lun 6 · 10:00','t-adm-2':'Lun 6 · 10:00','t-adm-3':'Lun 6 · 14:00',
+  't-adm-4':'Mar 7 · 08:00','t-adm-5':'Mar 7 · 08:00','t-adm-6':'Mar 7 · 14:00',
+  't-adm-7':'Lun 6 · 10:00','t-adm-8':'Mar 7 · 08:00',
+  't-adm-9':'Mié 8 · 15:00','t-adm-10':'Jue 9 · 12:30',
+  't-adm-11':'Vie 10 · 16:00','t-adm-12':'Lun 13 · 09:00'
+};
+function injectCardDates(){
+  Object.entries(CARD_STARTS).forEach(([id,startStr])=>{
+    const row=document.getElementById('row-'+id);
+    if(!row) return;
+    const meta=row.querySelector('.cp-meta');
+    if(!meta) return;
+    if(meta.querySelector('.fecha-inicio')) return;
+    const span=document.createElement('span');
+    span.className='fecha-badge fecha-inicio';
+    span.textContent='▶ '+startStr;
+    meta.insertBefore(span,meta.firstChild);
+  });
+  // Normalize all non-dead, non-inicio badges to end-of-day 18:00
+  document.querySelectorAll('.fecha-badge:not(.fecha-dead):not(.fecha-inicio)').forEach(badge=>{
+    badge.textContent=badge.textContent.replace(/ · \d{2}:\d{2}$/,' · 18:00');
+  });
+}
+
+loadState();
+injectCardDates();
+</script>
+</body>
+</html>
